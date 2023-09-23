@@ -1,4 +1,4 @@
-# diagrams for https://studies.cs.helsinki.fi/exampleapp/spa
+# diagram for https://studies.cs.helsinki.fi/exampleapp/spa
 
 ## loading the page
 ```mermaid
@@ -30,20 +30,4 @@ sequenceDiagram
     activate server
     server-->>browser: [{ "content": "HTML is easy", "date": "2023-1-1" }, ... ]
     deactivate server
-```
-
-# submitting a note
-
-```mermaid
-sequenceDiagram
-
- participant browser
-    participant server
-    participant browser
-
-    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa with note as json
-    activate server
-    deactivate server
-
-    Note right of browser: The browser starts executing the JavaScript code that updates the local html.
 ```
