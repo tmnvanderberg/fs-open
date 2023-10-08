@@ -10,7 +10,7 @@ const FeedbackButton = ({ text, handleClick }) => {
 
 const Statistics = ({ good, neutral, bad }) => {
   const all = good + neutral + bad;
-  return (
+  return all ? (
     <>
       <div> good {good} </div>
       <div> neutral {neutral} </div>
@@ -19,8 +19,8 @@ const Statistics = ({ good, neutral, bad }) => {
       <div> average {good - bad} </div>
       <div> positive {all ? good / all : 0} %</div>
     </>
-  );
-};
+  ) : <div> No feedback given </div>;
+}; 
 
 const App = () => {
   const [good, setGood] = useState(0);
