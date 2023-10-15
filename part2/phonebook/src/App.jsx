@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 const Person = ({person}) => {
  return (
-   <div> {person.name} </div>
+   <div> {person.name} {person.number} </div>
  )
 }
 
@@ -14,12 +14,17 @@ const Persons = ({persons}) => {
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas' }
+    { name: 'Arto Hellas', number: '055123884'}
   ])
   const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
 
   const handleNewNameChange = (event) => {
     setNewName(event.target.value)
+  }
+
+  const handleNumberChanged = (event) => {
+    setNewNumber(event.target.value)
   }
 
   const handleSubmit = (event) => {
@@ -28,7 +33,7 @@ const App = () => {
       window.alert(`A person with name ${newName} already exists!`)
       return
     }
-    setPersons([...persons, { name: newName }])
+    setPersons([...persons, { name: newName, number: newNumber }])
   }
 
   return (
@@ -40,6 +45,11 @@ const App = () => {
             value={newName}
             onChange={handleNewNameChange}
           />
+        </div>
+        <div>number: <input
+          value={newNumber}
+          onChange={handleNumberChanged}
+        />
         </div>
         <div>
           <button
