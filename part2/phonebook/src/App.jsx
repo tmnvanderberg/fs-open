@@ -24,6 +24,10 @@ const App = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault()
+    if (persons.some(person => person.name == newName)) {
+      window.alert(`A person with name ${newName} already exists!`)
+      return
+    }
     setPersons([...persons, { name: newName }])
   }
 
