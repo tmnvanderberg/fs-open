@@ -8,16 +8,24 @@ const Person = ({person}) => {
 
 const Persons = ({persons}) => {
  return (
-   persons.map(person => <Person person={person} key={person.name}/>)
+   persons.map(person => <Person person={person} key={person.id}/>)
  )
 }
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '055123884'}
+        { name: 'Arto Hellas', number: '040-123456', id: 1 },
+    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
+    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
+    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
   ])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [filterValue, setNewFilterValue] = useState('')
+
+  const handleFilterChange = (event) => {
+    setNewFilterValue(event.target.value)
+  }
 
   const handleNewNameChange = (event) => {
     setNewName(event.target.value)
@@ -33,12 +41,18 @@ const App = () => {
       window.alert(`A person with name ${newName} already exists!`)
       return
     }
-    setPersons([...persons, { name: newName, number: newNumber }])
+    setPersons([...persons, { name: newName, number: newNumber, id: persons.length + 1}])
+  }
+
+  const shouldDisplay = (person) => {
+    return person.name.toLowerCase().includes(filterValue.toLowerCase())
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
+      filter <input value={filterValue} onChange={handleFilterChange} />
+      <h2> Add new </h2>
       <form>
         <div>
           name: <input
@@ -60,7 +74,7 @@ const App = () => {
         </div>
       </form>
       <h2>Numbers</h2>
-      <Persons persons={persons}/>
+      <Persons persons={persons.filter(person => shouldDisplay(person))}/>
     </div>
   )
 }
