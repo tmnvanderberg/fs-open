@@ -1,20 +1,23 @@
 import { useState } from 'react'
 
-const Person = ({person}) => {
- return (
-   <div> {person.name} {person.number} </div>
- )
+import Filter from './components/filter'
+import PersonForm from './components/personform'
+
+const Person = ({ person }) => {
+  return (
+    <div> {person.name} {person.number} </div>
+  )
 }
 
-const Persons = ({persons}) => {
- return (
-   persons.map(person => <Person person={person} key={person.id}/>)
- )
+const Persons = ({ persons }) => {
+  return (
+    persons.map(person => <Person person={person} key={person.id} />)
+  )
 }
 
 const App = () => {
   const [persons, setPersons] = useState([
-        { name: 'Arto Hellas', number: '040-123456', id: 1 },
+    { name: 'Arto Hellas', number: '040-123456', id: 1 },
     { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
     { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
     { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
@@ -41,7 +44,7 @@ const App = () => {
       window.alert(`A person with name ${newName} already exists!`)
       return
     }
-    setPersons([...persons, { name: newName, number: newNumber, id: persons.length + 1}])
+    setPersons([...persons, { name: newName, number: newNumber, id: persons.length + 1 }])
   }
 
   const shouldDisplay = (person) => {
@@ -51,30 +54,22 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      filter <input value={filterValue} onChange={handleFilterChange} />
+      <Filter
+        value={filterValue}
+        onChange={handleFilterChange}
+      />
       <h2> Add new </h2>
-      <form>
-        <div>
-          name: <input
-            value={newName}
-            onChange={handleNewNameChange}
-          />
-        </div>
-        <div>number: <input
-          value={newNumber}
-          onChange={handleNumberChanged}
-        />
-        </div>
-        <div>
-          <button
-            type="submit"
-            onClick={handleSubmit}>
-            add
-          </button>
-        </div>
-      </form>
+      <PersonForm
+        newName={newName}
+        handleNewNameChange={handleNewNameChange}
+        newNumber={newNumber}
+        handleNumberChanged={handleNumberChanged}
+        handleSubmit={handleSubmit}
+      />
       <h2>Numbers</h2>
-      <Persons persons={persons.filter(person => shouldDisplay(person))}/>
+      <Persons
+        persons={persons.filter(person => shouldDisplay(person))}
+      />
     </div>
   )
 }
