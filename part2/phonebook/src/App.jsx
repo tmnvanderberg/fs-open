@@ -48,7 +48,10 @@ const App = () => {
       window.alert(`A person with name ${newName} already exists!`)
       return
     }
-    setPersons([...persons, { name: newName, number: newNumber, id: persons.length + 1 }])
+    const newPerson = { name: newName, number: newNumber, id: persons.length + 1 }
+    axios
+      .post('http://localhost:3001/persons', newPerson)
+      .then(response => setPersons([...persons, response.data]))
   }
 
   const shouldDisplay = (person) => {
