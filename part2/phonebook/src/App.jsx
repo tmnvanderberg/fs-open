@@ -1,21 +1,23 @@
 import { useEffect, useState } from 'react'
 
-import axios from 'axios'
-
 import Filter from './components/filter'
 import PersonForm from './components/personform'
 
 import personsService from './services/persons'
 
-const Person = ({ person }) => {
+const Person = ({ person, deleteOne }) => {
   return (
-    <div> {person.name} {person.number} </div>
+    <div>
+      {person.name}
+      {person.number}
+      <button onClick={() => deleteOne(person)}> delete </button>
+    </div>
   )
 }
 
-const Persons = ({ persons }) => {
+const Persons = ({ persons, deleteOne }) => {
   return (
-    persons.map(person => <Person person={person} key={person.id} />)
+    persons.map(person => <Person person={person} deleteOne={deleteOne} key={person.id} />)
   )
 }
 
@@ -56,6 +58,15 @@ const App = () => {
       .then(person => setPersons([...persons, person]))
   }
 
+  const deletePerson = (person) => {
+    if (window.confirm(`Delete ${person}`)) {
+      personsService
+        .deleteOne(person)
+        .then(() => setPersons(persons.filter( p => p.id != person.id))
+        )
+    }
+  }
+
   const shouldDisplay = (person) => {
     return person.name.toLowerCase().includes(filterValue.toLowerCase())
   }
@@ -78,6 +89,7 @@ const App = () => {
       <h2>Numbers</h2>
       <Persons
         persons={persons.filter(person => shouldDisplay(person))}
+        deleteOne = {deletePerson}
       />
     </div>
   )
