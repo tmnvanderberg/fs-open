@@ -2,10 +2,36 @@ import { useState, useEffect } from "react"
 import Note from "./components/note"
 import noteService from "./services/notes"
 
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+  return (
+    <div className="error">
+      {message}
+    </div>
+  )
+}
+
+const Footer = () => {
+  const FooterStyle = {
+    color: 'green',
+    fontStyle: 'italic',
+    fontSize: 16
+  }
+  return (
+    <div style={FooterStyle}>
+    <br />
+    <em> Note app, Deparment of dogs, University of Cats </em>
+    </div>
+  )
+}
+
 const App = () => {
   const [notes, setNotes] = useState([])
   const [newNote, setNewNote] = useState('')
   const [showAll, setShowAll] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('some error happened...')
 
   const addNote = (event) => {
     event.preventDefault()
@@ -40,37 +66,42 @@ const App = () => {
         setNotes(notes.map(note => note.id != id ? note : returnedNote))
       })
       .catch(error => {
-        alert(
-          `the note '${note.content}' was already deleted from server`
+        setErrorMessage(
+          `Note '${note.content}' was already removed from the server`
         )
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
         setNotes(notes.filter(n => n.id !== id))
       })
   }
 
   const notesToShow = showAll ? notes : notes.filter(note => note.important)
 
-    return (
+  return (
+    <div>
+      <h1>Notes</h1>
+      <Notification message={errorMessage} />
       <div>
-        <h1>Notes</h1>
-        <div>
-          <button onClick={() => setShowAll(!showAll)}>
-            show {showAll ? 'important' : 'all'}
-          </button>
-        </div>
-        <ul>
-          {notesToShow.map(note =>
-            <Note key={note.id} note={note} toggleImportance={toggleImportance} />
-          )}
-        </ul>
-        <form onSubmit={addNote}>
-          <input
-            value={newNote}
-            onChange={handleNoteChange}
-          />
-          <button type="submit">save</button>
-        </form>
+        <button onClick={() => setShowAll(!showAll)}>
+          show {showAll ? 'important' : 'all'}
+        </button>
       </div>
-    )
-  }
+      <ul>
+        {notesToShow.map(note =>
+          <Note key={note.id} note={note} toggleImportance={toggleImportance} />
+        )}
+      </ul>
+      <form onSubmit={addNote}>
+        <input
+          value={newNote}
+          onChange={handleNoteChange}
+        />
+        <button type="submit">save</button>
+      </form>
+      <Footer />
+    </div>
+  )
+}
 
-  export default App
+export default App
