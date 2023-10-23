@@ -8,8 +8,8 @@ import personsService from './services/persons'
 const Person = ({ person, deleteOne }) => {
   return (
     <div>
-      {person.name}
-      {person.number}
+      <div> {person.name} </div>
+      <div> {person.number} </div>
       <button onClick={() => deleteOne(person)}> delete </button>
     </div>
   )
@@ -29,8 +29,8 @@ const App = () => {
 
   const getPersonsHook = () => {
     personsService
-    .getAll()
-    .then(persons => setPersons(persons))
+      .getAll()
+      .then(persons => setPersons(persons))
   }
   useEffect(getPersonsHook, [])
 
@@ -46,23 +46,41 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
-  const handleSubmit = (event) => {
-    event.preventDefault()
-    if (persons.some(person => person.name == newName)) {
-      window.alert(`A person with name ${newName} already exists!`)
-      return
-    }
-    const newPerson = { name: newName, number: newNumber, id: persons.length + 1 }
+  const createPerson = () => {
+    const newPerson = { name: newName, number: newNumber }
     personsService
       .create(newPerson)
       .then(person => setPersons([...persons, person]))
   }
 
+  const updatePerson = (person) => {
+    personsService
+      .update({ name: person.name, number: newNumber, id: person.id })
+      .then(person => {
+        setPersons(
+          persons.map(
+            p => p.id == person.id ? person : p
+          )
+        )
+      })
+  }
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    const person = persons.find(person => person.name == newName)
+    if (!person) {
+      createPerson()
+      return
+    }
+    if (window.confirm(`${newName} already exists, replace the number?`)) {
+      updatePerson(person)
+    }
+  }
+
   const deletePerson = (person) => {
-    if (window.confirm(`Delete ${person}`)) {
+    if (window.confirm(`Delete ${person.name}?`)) {
       personsService
         .deleteOne(person)
-        .then(() => setPersons(persons.filter( p => p.id != person.id))
+        .then(() => setPersons(persons.filter(p => p.id != person.id))
         )
     }
   }
@@ -89,7 +107,7 @@ const App = () => {
       <h2>Numbers</h2>
       <Persons
         persons={persons.filter(person => shouldDisplay(person))}
-        deleteOne = {deletePerson}
+        deleteOne={deletePerson}
       />
     </div>
   )
