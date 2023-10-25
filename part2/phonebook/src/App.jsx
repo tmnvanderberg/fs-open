@@ -21,11 +21,24 @@ const Persons = ({ persons, deleteOne }) => {
   )
 }
 
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className="notification">
+      {message}
+    </div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterValue, setNewFilterValue] = useState('')
+  const [notificationMessage, setNotificationMessage] = useState(null)
 
   const getPersonsHook = () => {
     personsService
@@ -50,20 +63,31 @@ const App = () => {
     const newPerson = { name: newName, number: newNumber }
     personsService
       .create(newPerson)
-      .then(person => setPersons([...persons, person]))
+      .then((person) => {
+        setPersons([...persons, person])
+        setNotificationMessage(`Added ${newPerson.name}`)
+        setTimeout(() => {
+          setNotificationMessage(null)
+        }, 5000)
+      })
   }
 
   const updatePerson = (person) => {
     personsService
       .update({ name: person.name, number: newNumber, id: person.id })
-      .then(person => {
+      .then((person) => {
         setPersons(
           persons.map(
             p => p.id == person.id ? person : p
           )
         )
+        setNotificationMessage(`updated ${person.name}`)
+        setTimeout(() => {
+          setNotificationMessage(null)
+        }, 5000)
       })
   }
+
   const handleSubmit = (event) => {
     event.preventDefault()
     const person = persons.find(person => person.name == newName)
@@ -92,6 +116,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notificationMessage} />
       <Filter
         value={filterValue}
         onChange={handleFilterChange}
