@@ -21,13 +21,13 @@ const Persons = ({ persons, deleteOne }) => {
   )
 }
 
-const Notification = ({ message }) => {
+const Notification = ({ message, className }) => {
   if (message === null) {
     return null
   }
 
   return (
-    <div className="notification">
+    <div className={className}>
       {message}
     </div>
   )
@@ -39,6 +39,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [filterValue, setNewFilterValue] = useState('')
   const [notificationMessage, setNotificationMessage] = useState(null)
+  const [notificationClass, setNotificationClass] = useState('notification')
 
   const getPersonsHook = () => {
     personsService
@@ -59,16 +60,21 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
+  const setNotification = (message, className) => {
+    setNotificationClass(className)
+    setNotificationMessage(message)
+    setTimeout(() => {
+      setNotificationMessage(null)
+    }, 5000)
+  }
+
   const createPerson = () => {
     const newPerson = { name: newName, number: newNumber }
     personsService
       .create(newPerson)
       .then((person) => {
         setPersons([...persons, person])
-        setNotificationMessage(`Added ${newPerson.name}`)
-        setTimeout(() => {
-          setNotificationMessage(null)
-        }, 5000)
+        setNotification(`Added ${newPerson.name}`, 'notification')
       })
   }
 
@@ -81,10 +87,7 @@ const App = () => {
             p => p.id == person.id ? person : p
           )
         )
-        setNotificationMessage(`updated ${person.name}`)
-        setTimeout(() => {
-          setNotificationMessage(null)
-        }, 5000)
+        setNotification(`updated ${person.name}`, 'notification')
       })
   }
 
@@ -106,6 +109,9 @@ const App = () => {
         .deleteOne(person)
         .then(() => setPersons(persons.filter(p => p.id != person.id))
         )
+        .catch(error => {
+          setNotification(`Failed to delete ${person.name}`, 'error')
+        })
     }
   }
 
@@ -116,7 +122,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={notificationMessage} />
+      <Notification message={notificationMessage} className={notificationClass} />
       <Filter
         value={filterValue}
         onChange={handleFilterChange}
