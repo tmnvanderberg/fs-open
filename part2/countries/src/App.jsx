@@ -1,35 +1,95 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState, useEffect } from 'react'
 import './App.css'
+import countryService from './services/countries'
+import Filter from './components/filter'
+
+const Country = ({ country }) => {
+  console.log(country)
+  return (
+    <div>
+      <h1> {country.name.common} </h1>
+      <div> capital {country.capital} </div>
+      <div> area {country.area} </div>
+      <h2> languages: </h2>
+      <ul>
+        { Object
+          .keys(country.languages)
+          .map(langKey => <li key={langKey}> { country.languages[langKey] } </li>) }
+      </ul>
+      <div>
+        <img src={country.flags.png} alt="flag"/>
+      </div>
+    </div>
+  )
+}
+
+const Countries = ({ countries }) => {
+  const num = countries.length
+
+  if (num > 10) {
+    return (
+      <div> "too many" </div>
+    )
+  }
+
+  if (num == 1) {
+    return (
+      <Country country={countries[0]}/>
+    )
+  }
+
+  if (countries.length <= 10) {
+    return (
+      <div>
+        {
+          countries.map(country =>
+            <Country
+              country={country}
+              key={country.name.official}
+            />
+          )
+        }
+      </div>
+    )
+  }
+}
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [countries, setCountries] = useState([])
+  const [filterValue, setFilterValue] = useState("")
+  const [shownCountries, setShownCountries] = useState([])
+
+  const getCountriesHook = () => {
+    countryService
+      .getAll()
+      .then(countries => {
+        setCountries(countries)
+      })
+  }
+  useEffect(getCountriesHook, [])
+
+  const handleFilterChange = (event) => {
+    setFilterValue(event.target.value)
+    const matching = countries.filter(country => shouldDisplay(country))
+    setShownCountries(matching)
+  }
+
+  const shouldDisplay = (country) => {
+    return (
+      country.name.common.toLowerCase().includes(filterValue.toLowerCase())
+    )
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div>
+      <Filter
+        value={filterValue}
+        onChange={handleFilterChange}
+      />
+      <Countries countries={shownCountries} />
+    </div>
   )
+
 }
 
 export default App
