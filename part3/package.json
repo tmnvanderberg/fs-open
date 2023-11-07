@@ -1,0 +1,20 @@
+{
+  "name": "backend",
+  "version": "0.0.1",
+  "description": "fullstack-open",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \\\"Error: to test specific\\\" && exit 1\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tmnvanderberg/fs-open.git"
+  },
+  "author": "Timon van der Berg",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tmnvanderberg/fs-open/issues"
+  },
+  "homepage": "https://github.com/tmnvanderberg/fs-open#readme"
+}
